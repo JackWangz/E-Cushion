@@ -1,0 +1,8 @@
+people=[]
+sit_Time=[]
+avg_sitting_time=-1min
+come_and_leave=[[],[]]
+司機=[]
+超時=[]
+temp_array={"avg_temp":-1}
+更新時間="2015-09-17 12:48:22"

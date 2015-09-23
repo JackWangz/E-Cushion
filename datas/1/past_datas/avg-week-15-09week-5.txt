@@ -1,0 +1,8 @@
+turn_rate=-1
+eating_Time=[]
+avg_eating_time=-1min
+come_and_leave=[[],[]]
+t_id=[]
+最熱門桌號=-1
+temp_array={"avg_temp":-1}
+更新時間="2015-09-17 12:48:22"
