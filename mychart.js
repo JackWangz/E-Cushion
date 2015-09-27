@@ -85,24 +85,32 @@ function littlechart(brother_ele,how_many_times){
 	}
 	for(var i=0;i<how_many_times.length;i++){
 		split=how_many_times[i].split(".txt")[0];
-		who_arr.push(split);
+		nicelook = split.split("avg-");
+		console.log(nicelook[1]);
+		if(typeof nicelook[1] !== 'undefined'){
+			who_arr.push(nicelook[1]);
+		}else{
+			who_arr.push(split);
+		}
+
 	}
 	for(var i =0;i<how_many_times.length;i++){
 		addele(who_arr,i);
 	}
 	function addele(who_is_who,index){
 	  out_div = document.createElement("div");
-	  child.style.padding="20px 20px";
+	  child.style.padding="12px";
+	  child.style.float="right";
 	  child.appendChild(out_div);
 	  div = document.createElement("div");
 	  div.style.width="15px";
-	  div.style.float="left";
+	  div.style.display="inline-block";
 	  div.style.backgroundColor=mycolor[index];
 	  div.style.height="15px";
 	  out_div.appendChild(div);
 	  div = document.createElement("div");
 	  div.innerHTML=who_is_who[index];
-	  div.style.float="left";
+	  div.style.display="inline-block";
 	  out_div.appendChild(div);
 	}
 }
@@ -203,7 +211,14 @@ function linecomparechart(elementID,label,data_array){
 		.enter()
 		.append("text")
 		.text(function(d){
-			return (d/sum*100).toFixed(2)+"%";
+			num = (d/sum*100);
+			if (num < 3) {
+				return "";
+			} else if (num < 5) {
+				return num.toFixed(0) + "";
+			} else {
+				return num.toFixed(2) + "%";
+			}
 		})
 		.attr("text-anchor","middle")
 		.attr("x",function(d,i){

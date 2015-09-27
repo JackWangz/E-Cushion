@@ -23,17 +23,22 @@ if(count($filename)==1){
 else{
 	for($i=0;$i<count($filename);$i++){
 		$handle = fopen($path.$filename[$i], "r");
-		$arr;
+		$arr = array();
 		if ($handle)
 		{
 		      while (!feof($handle))
 		      {
 		            $buffer = fgets($handle);
-		            $split =  explode("=",$buffer);
+					//echo $buffer;
+					//echo "</br>";
+		            $split = explode("=",$buffer);
 		            $arr[$split[0]] = $split[1];
+					//echo "arr[".$split[0]."] = ".$split[1];
+					//echo "</br>";
 		      }
 		}
 		fclose($handle);
+		//print_r(array_keys($arr));
 		echo json_encode($arr);
 		echo "~~~~~~~~~~";
 	}

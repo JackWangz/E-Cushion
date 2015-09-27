@@ -6,12 +6,30 @@
 		$dirPath = $directories[$i]."/pi";
 		echo $dirPath."<br>";
 		$txts = glob($dirPath."/*.txt");
-		for($j = 0; $j < count($txts);$j++)
+		if(count($txts) > 0)
 		{
-			echo $txts[$j]."<br>";
-			$fileHandle = fopen($txts[$j], "w");
+			for($j = 0; $j < count($txts);$j++)
+			{
+				echo $txts[$j]."<br>";
+				$fileHandle = fopen($txts[$j], "w");
 
-			fclose($fileHandle);
+				fclose($fileHandle);
+			}			
+		}
+		else
+		{
+			$cars = glob($dirPath . '/*' , GLOB_ONLYDIR);
+			for($s = 0 ; $s < count($cars);$s++)
+			{
+				$txts = glob($cars[$s]."/*.txt");
+				for($j = 0; $j < count($txts);$j++)
+				{
+					echo $txts[$j]."<br>";
+					$fileHandle = fopen($txts[$j], "w");
+
+					fclose($fileHandle);
+				}	
+			}
 		}
 	}
 ?>

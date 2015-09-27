@@ -88,6 +88,8 @@
 				}
 			}
 			$dirPath = $dirPath."/".$sensor_PI_Name;
+				/*var_dump($dirPath);
+				echo "<br>";*/
 			if(!is_dir($dirPath))
 			{//如果該目錄不存在 則建立
 				if(!mkdir($dirPath,"0777"))
@@ -99,6 +101,9 @@
 			
 			$replaced_a_mac = str_replace(":","-",$key_value);
 			$fileName = $dirPath."/".$replaced_a_mac.".txt";
+			
+			echo $fileName."<br>";
+			
 			$file = fopen($fileName,"a");
 
 			$valueArray = explode(",", $logs[$i]['Value']);
@@ -139,6 +144,8 @@
 	}
 	//刪除資料庫資料
 
+	
+	
 	//做資料運算?
 	$directories = glob($root . '/*' , GLOB_ONLYDIR);
 	for($i = 0; $i < count($directories);$i++)
@@ -153,7 +160,6 @@
 
 		if($Model == "餐廳")
 		{
-			echo "Model = $Model";
 			$dirPath = $directories[$i]."/past_datas";
 			if(!is_dir($dirPath))
 			{//如果該目錄不存在 則建立
@@ -185,7 +191,7 @@
 			$hot_seat = $calcAPI->calc_hot_seat($directories[$i]."/sensor");
 			if( empty( $hot_seat ) )
 			{
-			    fputs($file,"No seats!\r\n");
+			    fputs($file,"最熱門座位=No seats!\r\n");
 			}
 			else
 			{
@@ -222,7 +228,6 @@
 		else if($Model == "計程車")
 		{
 			$PI_Names = glob($directories[$i].'/sensor/*' , GLOB_ONLYDIR);
-			var_dump($PI_Names);
 			$driver_array = array();
 			$over_time_array = array();
 			$people = array();
@@ -235,6 +240,11 @@
 			{
 				//var_dump($directories[$i]."/sensor/".$PI_Names[$j]);
 				$driver = $calcAPI->calc_taxi_driver($PI_Names[$j]);
+				if($driver == -1)
+				{
+					//echo "driver not working!";
+					continue;
+				}
 				$driver = str_replace(":","-",$driver);
 				
 				$tmp = explode('/',$PI_Names[$j]);
@@ -314,22 +324,22 @@
 			$fileName = $dirPath."/".date("y-m-d").".txt";
 			$file = fopen($fileName,"w");
 			
-			fputs($file, "people=".json_encode($people)."\r\n");
+			fwrite($file, "people=".json_encode($people)."\r\n");
 
-			fputs($file, "sit_time=".json_encode($sit_time)."\r\n");
+			fwrite($file, "sit_time=".json_encode($sit_time)."\r\n");
 
-			fputs($file, "avg_sitting_time=".json_encode($avg_sitting_time)."min\r\n");
+			fwrite($file, "avg_sitting_time=".json_encode($avg_sitting_time)."min\r\n");
 
 			$come_and_leave = array($come,$leave);
-			fputs($file, "come_and_leave=".json_encode($come_and_leave)."\r\n");
+			fwrite($file, "come_and_leave=".json_encode($come_and_leave)."\r\n");
 
-			fputs($file, "司機=".json_encode($driver_array)."\r\n");
-			fputs($file, "超時=".json_encode($over_time_array)."\r\n");
+			fwrite($file, "司機=".json_encode($driver_array)."\r\n");
+			fwrite($file, "超時=".json_encode($over_time_array)."\r\n");
 
-			fputs($file, "temp_array=".json_encode($temp_array)."\r\n");
+			fwrite($file, "temp_array=".json_encode($temp_array)."\r\n");
 
 
-			fputs($file, "更新時間=".json_encode(date("Y-m-d H:i:s")));
+			fwrite($file, "更新時間=".json_encode(date("Y-m-d H:i:s")));
 			
 			fclose($file);
 		}

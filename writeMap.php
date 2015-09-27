@@ -65,6 +65,11 @@
 			fwrite($this->file, json_encode($this->output));
 			fclose($this->file);
 		}
+
+		function deleteData()
+		{
+			
+		}
 	}
 
 

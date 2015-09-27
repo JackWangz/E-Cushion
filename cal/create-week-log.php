@@ -188,16 +188,16 @@
 				{
 					$turn_rate = $turn_rate/count($weekArrays[$i]);
 					foreach ($eating_time as $key => $value) {
-						$eating_time[$key] = $value/count($weekArrays[$i]);
+						$eating_time[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($come as $key => $value) {
-						$come[$key] = $value/count($weekArrays[$i]);
+						$come[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($leave as $key => $value) {
-						$leave[$key] = $value/count($weekArrays[$i]);
+						$leave[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($G_ID_array as $key => $value) {
-						$G_ID_array[$key] = $value/count($weekArrays[$i]);
+						$G_ID_array[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($popular_group as $key => $value) {
 						if($popular_tmp_G_ID == -1)
@@ -207,7 +207,7 @@
 								$popular_tmp_G_ID = $key;
 					}
 					
-					$avg_eating_time = $avg_eating_time/count($weekArrays[$i]);
+					$avg_eating_time = round($avg_eating_time/count($weekArrays[$i]),2);
 				}
 				fputs($file, "turn_rate=".json_encode($turn_rate)."\r\n");
 				fputs($file, "eating_Time=".json_encode($eating_time)."\r\n");
@@ -403,7 +403,7 @@
 					}
 					fclose($fileHandle);
 				}
-				$fileName = $filePath."/avg-week-".date("m")."week-$i.txt";
+				$fileName = $filePath."/avg-week-".date("m")."-$i.txt";
 				$file = fopen($fileName,"w");
 				echo count($weekArrays[$i])."<br>";
 				if(count($weekArrays[$i]) == 0)
@@ -424,22 +424,22 @@
 				}else
 				{
 					foreach ($people as $key => $value) {
-						$people[$key] = $value/count($weekArrays[$i]);
+						$people[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($eating_time as $key => $value) {
-						$sit_time[$key] = $value/count($weekArrays[$i]);
+						$sit_time[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($come as $key => $value) {
-						$come[$key] = $value/count($weekArrays[$i]);
+						$come[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					foreach ($leave as $key => $value) {
-						$leave[$key] = $value/count($weekArrays[$i]);
+						$leave[$key] = round($value/count($weekArrays[$i]),2);
 					}
 					
-					$avg_sitting_time = $avg_sitting_time/count($weekArrays[$i]);
+					$avg_sitting_time = round($avg_sitting_time/count($weekArrays[$i]),2);
 				}
 				fputs($file, "people=".json_encode($people)."\r\n");
-				fputs($file, "sit_Time=".json_encode($sit_time)."\r\n");
+				fputs($file, "sit_time=".json_encode($sit_time)."\r\n");
 				fputs($file, "avg_sitting_time=".json_encode($avg_sitting_time)."min\r\n");
 				$come_and_leave = array($come,$leave);
 				fputs($file, "come_and_leave=".json_encode($come_and_leave)."\r\n");	

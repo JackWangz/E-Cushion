@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,500,700,900);
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:700,500,400,300);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:700,500,400,300,100);
 * {
   margin: 0;
   border: 0;
@@ -73,9 +73,8 @@ a:link:active, a:visited:active {
         font-size: 18px;
         color: #222222;
         padding: 5px; }
-  #popup #btn-remove-seat, #popup #btn-close, #popup #btn-remove-area,
-  #popup #btn-remove-group, #popup #btn-createArea, #popup #btn-create,
-  #popup #btn-bind {
+  #popup #btn-remove-seat, #popup #btn-remove-area, #popup #btn-remove-group,
+  #popup #btn-createArea, #popup #btn-create, #popup #btn-bind, #popup #btn-close {
     width: 40%;
     padding: 12px;
     margin-top: 5%;
@@ -85,22 +84,19 @@ a:link:active, a:visited:active {
     border: 1px solid #fff;
     background: #09a3b4;
     color: #fff; }
-    #popup #btn-remove-seat:hover, #popup #btn-close:hover, #popup #btn-remove-area:hover,
-    #popup #btn-remove-group:hover, #popup #btn-createArea:hover, #popup #btn-create:hover,
-    #popup #btn-bind:hover {
+    #popup #btn-remove-seat:hover, #popup #btn-remove-area:hover, #popup #btn-remove-group:hover,
+    #popup #btn-createArea:hover, #popup #btn-create:hover, #popup #btn-bind:hover, #popup #btn-close:hover {
       border: 1px solid #09a3b4;
       background: #fff;
       color: #09a3b4; }
   #popup #btn-createMap {
-    width: 40%;
+    width: 30%;
     padding: 12px;
-    margin-top: 5%;
-    margin-left: 6%;
     cursor: pointer;
     font-size: 20px;
-    border: 1px solid #fff;
-    background: #09a3b4;
-    color: #fff; }
+    border: 1px solid #FFF;
+    color: #FFF;
+    background: #16a085 none repeat scroll 0% 0%; }
     #popup #btn-createMap:hover {
       border: 1px solid #09a3b4;
       background: #fff;
@@ -318,33 +314,30 @@ a:link:active, a:visited:active {
 
 #div-createMap {
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5) inset, 0px 1px 1px #DDD;
-  font-size: 32px;
+  font-size: 38px;
   text-align: center;
-  padding: 20px;
-  width: 500px;
-  border-radius: 2px;
-  margin: 10% auto 0px; }
+  padding: 5px;
+  width: 700px;
+  border-radius: 5px;
+  margin: 2% auto 0px;
+  border: 5px solid #16a085; }
   #div-createMap h1 {
-    font-size: 32px;
-    color: #333;
+    font-size: 44px;
+    color: #16a085;
     padding: 7px;
-    text-transform: uppercase;
-    font-weight: 500; }
-    #div-createMap h1 b {
-      font-size: inherit;
-      font-weight: 900; }
+    text-shadow: 0 1px #d2d2d2; }
   #div-createMap p {
     font-size: 24px;
-    font-weight: 700; }
+    font-weight: 100; }
 
 /* Number Selector -> Create seat map */
 input[type=number] {
   float: left;
   width: 70px;
-  height: 84px;
+  height: 83.4px;
   padding: 0px;
-  color: #f46353;
-  border: 2px solid #f46353;
+  color: #16a085;
+  border: 2px solid #16a085;
   background: transparent none repeat scroll 0% 0%;
   outline: medium none;
   pointer-events: none;
@@ -375,8 +368,8 @@ div.numberPicker > .add {
   font-family: Lato;
   font-weight: 700;
   line-height: 33px;
-  color: #f46353;
-  border-color: #f46353;
+  color: #16a085;
+  border-color: #16a085;
   border-image: none;
   cursor: pointer;
   text-align: center;
@@ -393,13 +386,13 @@ div.numberPicker > .add {
 
 div.numberPicker > .add {
   top: 0;
-  border: 2px #f46353 solid;
+  border: 2px #16a085 solid;
   border-left: 0;
   border-radius: 0 2px 2px 0; }
 
 div.numberPicker > .sub:hover,
 div.numberPicker > .add:hover {
-  background: #f46353;
+  background: #16a085;
   color: #fff; }
 
 input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
@@ -453,30 +446,29 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   border-color: #B89; }
 
 .active {
-  background: #adf2f9;
-  transform: scale(1.1);
-  transition: all 0.2s; }
+  background: #E8F3FB;
+  transform: scale(1.05);
+  transition: all 0.1s; }
 
 .grouped {
-  background: #E4D9FF; }
+  background: #E8F3FB; }
 
 .disabled {
-  background: #F25F5C; }
+  background: #f46353; }
 
 .ready {
-  background: #E4D9FF; }
+  background: #E8F3FB; }
 
 .right-container {
-  padding-top: 25px;
   background: #fff;
   width: 100%;
   transition: all 0.7s; }
   .right-container .section-header {
-    width: 580px;
-    height: 100px;
-    margin: 0 auto; }
-    .right-container .section-header.chart {
-      width: 900px; }
+    margin: 20px 0;
+    width: 100%;
+    height: 100px; }
+  .right-container .nav-area {
+    margin-top: 20px; }
   .right-container .nav-area li {
     Webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -521,38 +513,78 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     color: #fff;
     background: #0087cc; }
   .right-container .section-content {
-    width: 90%;
-    height: 500px; }
+    width: 100%;
+    height: 500px;
+    border-top: 1px solid #f2f2f2; }
   .right-container .section-information {
-    width: 45%;
+    position: relative;
+    width: 43%;
     text-transform: uppercase;
-    margin-left: 95px;
+    margin-left: 120px;
     float: left; }
+    .right-container .section-information .remove-area {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 0.9em;
+      text-align: center;
+      cursor: pointer;
+      color: #BDBBBB; }
+      .right-container .section-information .remove-area:hover {
+        background: #f46353;
+        color: #fff; }
+    .right-container .section-information .area-info {
+      height: 250px;
+      border-bottom: 1px solid #D2D6D5; }
+      .right-container .section-information .area-info .area-info-cell {
+        font-weight: 300;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f2f2f2; }
+        .right-container .section-information .area-info .area-info-cell:hover {
+          background: rgba(243, 170, 12, 0.2); }
+        .right-container .section-information .area-info .area-info-cell:last-child {
+          border-bottom: none; }
+        .right-container .section-information .area-info .area-info-cell .area-info-name {
+          color: rgba(243, 170, 12, 0.8); }
+        .right-container .section-information .area-info .area-info-cell h1 {
+          color: #f3aa0c;
+          font-size: 40px;
+          font-weight: 500; }
     .right-container .section-information .map-info {
-      height: 165px;
-      width: 150px;
-      color: #a7c031;
+      padding-top: 28px; }
+    .right-container .section-information .map-info-cell {
+      height: 100px;
+      width: 100px;
+      color: #f46353;
       position: relative;
-      display: inline-block;
-      padding-top: 14px;
+      float: left;
       font-size: 28px;
       font-weight: 300;
       text-align: center;
       margin-left: 27px;
-      margin-top: 27px;
-      border-radius: 10px;
-      border: 4px solid #a7c031;
-      transition: all 0.4s; }
-      .right-container .section-information .map-info:nth-of-type(1), .right-container .section-information .map-info:nth-of-type(2) {
-        margin-top: 0; }
-      .right-container .section-information .map-info:hover {
-        background: #e2f683; }
-      .right-container .section-information .map-info .map-info-detail {
-        font-size: 70px;
+      border-radius: 99em;
+      border: 3px solid #f46353;
+      transition: all 0.3s; }
+      .right-container .section-information .map-info-cell:first-child {
+        margin-left: 0; }
+      .right-container .section-information .map-info-cell > div {
+        font-size: 22px;
+        font-weight: 100;
+        padding-top: 13px; }
+      .right-container .section-information .map-info-cell:hover {
+        background: rgba(243, 170, 12, 0.2); }
+      .right-container .section-information .map-info-cell .map-info-detail {
+        font-size: 45px;
+        margin-top: -18px;
         font-weight: 700; }
   .right-container .nav-chart {
-    display: flex;
-    margin-bottom: 20px; }
+    width: 500px;
+    height: 40px;
+    margin: 0 auto; }
   .right-container .nav-chart li {
     Webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -593,7 +625,9 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
       text-align: center;
       letter-spacing: 0.05em; }
   .right-container .nav-chartTiming {
-    display: block;
+    width: 700px;
+    margin: 0px auto;
+    padding-top: 20px;
     transform: scale(0); }
   .right-container .nav-chartTiming li {
     Webkit-box-sizing: border-box;
@@ -601,9 +635,9 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     box-sizing: border-box;
     font-style: normal;
     font-weight: 900;
-    border: 2px solid #f46353;
+    border: 2px solid #f3aa0c;
     display: block;
-    color: #f46353;
+    color: #f3aa0c;
     font-size: 12px;
     float: left;
     line-height: 25px;
@@ -624,14 +658,26 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     .right-container .nav-chartTiming li:last-of-type {
       border-radius: 0 5px 5px 0; }
     .right-container .nav-chartTiming li:hover {
-      background: #fcbdb6; }
+      background: #FFE066; }
     .right-container .nav-chartTiming li.selected {
-      background: #f46353; }
+      background: #f3aa0c;
+      border-style: solid;
+      border-left-color: #fff; }
+      .right-container .nav-chartTiming li.selected:hover a {
+        color: #FFE066; }
       .right-container .nav-chartTiming li.selected a {
+        color: #fff; }
+    .right-container .nav-chartTiming li.selected:nth-child(1) {
+      background: #f3aa0c;
+      border-style: solid;
+      border-left-color: #f3aa0c; }
+      .right-container .nav-chartTiming li.selected:nth-child(1):hover a {
+        color: #FFE066; }
+      .right-container .nav-chartTiming li.selected:nth-child(1) a {
         color: #fff; }
     .right-container .nav-chartTiming li a {
       font-size: 14px;
-      color: #f46353;
+      color: #f3aa0c;
       text-align: center;
       letter-spacing: 0.05em; }
   .right-container .display {
@@ -783,16 +829,67 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
               background: #939393;
               cursor: pointer; }
 
+.table-main {
+  width: 50%;
+  margin: 25px auto;
+  border-radius: 3px;
+  box-shadow: 1px 1px 2px rgba(51, 51, 51, 0.14) inset, 1px 1px 2px rgba(51, 51, 51, 0.14);
+  border-collapse: collapse; }
+  .table-main td {
+    height: 50px;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center; }
+  .table-main td:not(:last-child) {
+    border-right: 1px solid #f2f2f2; }
+  .table-main tr:not(:first-child) {
+    background: rgba(219, 52, 52, 0.48); }
+    .table-main tr:not(:first-child):nth-child(even) {
+      background: rgba(219, 52, 52, 0.48);
+      color: #fff; }
+    .table-main tr:not(:first-child):nth-child(odd) {
+      background-color: #fff;
+      color: #333; }
+  .table-main th {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    border-bottom: 4px solid rgba(191, 69, 69, 0.87);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #f46353; }
+    .table-main th:first-child {
+      border-top-left-radius: 5px; }
+    .table-main th:last-child {
+      border-top-right-radius: 5px; }
+    .table-main th:not(:last-child) {
+      border-right: 1px dotted; }
+
 .chart-cell {
-  width: 540px;
-  height: 400px;
+  width: 470px;
+  height: 450px;
   display: inline-block;
   background-color: rgba(242, 242, 242, 0.38);
   border: 1px solid #F3EBDC;
   border-radius: 5px;
   padding: 10px;
-  margin-right: 30px;
-  margin-bottom: 20px; }
+  margin: 20px 30px 20px 35px; }
+  .chart-cell:hover ~ div.chart-cell {
+    opacity: 0.5; }
+  .chart-cell .chart-meta {
+    float: left;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 300;
+    color: #f46353;
+    margin-top: 5px; }
+    .chart-cell .chart-meta b {
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #F7464A; }
 
 /*# sourceMappingURL=style.css.map */
 .spinner {

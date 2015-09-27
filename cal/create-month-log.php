@@ -156,16 +156,16 @@
 			{
 				$turn_rate = $turn_rate/count($txts);
 				foreach ($eating_time as $key => $value) {
-					$eating_time[$key] = $value/count($txts);
+					$eating_time[$key] = round($value/count($txts),2);
 				}
 				foreach ($come as $key => $value) {
-					$come[$key] = $value/count($txts);
+					$come[$key] = round($value/count($txts),2);
 				}
 				foreach ($leave as $key => $value) {
-					$leave[$key] = $value/count($txts);
+					$leave[$key] = round($value/count($txts),2);
 				}
 				foreach ($G_ID_array as $key => $value) {
-					$G_ID_array[$key] = $value/count($txts);
+					$G_ID_array[$key] = round($value/count($txts));
 				}
 				foreach ($popular_group as $key => $value) {
 					if($popular_tmp_G_ID == -1)
@@ -175,7 +175,7 @@
 							$popular_tmp_G_ID = $key;
 				}
 				
-				$avg_eating_time = $avg_eating_time/count($txts);
+				$avg_eating_time = round($avg_eating_time/count($txts),2);
 			}
 			fputs($file, "turn_rate=".json_encode($turn_rate)."\r\n");
 			fputs($file, "eating_Time=".json_encode($eating_time)."\r\n");
@@ -358,24 +358,24 @@
 			}else
 			{
 				foreach ($people as $key => $value) {
-					$people[$key] = $value/count($txts);
+					$people[$key] = round($value/count($txts),2);
 				}
 				foreach ($eating_time as $key => $value) {
-					$sit_time[$key] = $value/count($txts);
+					$sit_time[$key] = round($value/count($txts),2);
 				}
 				var_dump($come);
 				foreach ($come as $key => $value) {
-					$come[$key] = $value/count($txts);
+					$come[$key] = round($value/count($txts),2);
 				}
 				foreach ($leave as $key => $value) {
-					$leave[$key] = $value/count($txts);
+					$leave[$key] = round($value/count($txts),2);
 				}
 				
-				$avg_sitting_time = $avg_sitting_time/count($txts);
+				$avg_sitting_time = round($avg_sitting_time/count($txts),2);
 			}
 			var_dump($popular_group);
 			fputs($file, "people=".json_encode($people)."\r\n");
-			fputs($file, "sit_Time=".json_encode($sit_time)."\r\n");
+			fputs($file, "sit_time=".json_encode($sit_time)."\r\n");
 			fputs($file, "avg_sitting_time=".json_encode($avg_sitting_time)."min\r\n");
 			$come_and_leave = array($come,$leave);
 			fputs($file, "come_and_leave=".json_encode($come_and_leave)."\r\n");	

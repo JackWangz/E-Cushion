@@ -108,7 +108,7 @@
 
 <html>
 	<head>
-		<title>E-Cushion 加入會員</title>
+		<title>E-Cushion - Sign Up</title>
 		<meta charset="utf8" />
 		<link rel=stylesheet type="text/css" href="../css/sign_page.css"> 
 		<link href='https://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
@@ -134,10 +134,10 @@
 					</td>
 				</tr>
 				<tr>
-					<td><input class="form-item input1" name="checknum" id="checknum" type="text" placeholder="請輸入驗證碼"/></td>
+					<td><input class="form-item input1" name="checknum" id="checknum" type="text" placeholder="驗證碼 Type the characters"/></td>
 					<td><img class="form-item captcha" src="captcha_pic.php"></td>
 				</tr>
-				<tr><td colspan="2"><button class="form-item button1" name="submit" type="submit">確認送出</button></td></tr>
+				<tr><td colspan="2"><button class="form-item button1" name="submit" type="submit">送出 Submit</button></td></tr>
 				<tr><td colspan="2">
 					<div class="form-item message2">
 						<?php

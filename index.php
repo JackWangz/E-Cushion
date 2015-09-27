@@ -21,7 +21,7 @@
     <script src="js/jquery.event.drop-2.2.js"></script>
     <script src="js/jquery.event.drop.live-2.2.js"></script>
     </head>
-    <body onload="loadChartPage()">
+    <body onload="loadSeatTablePage()">
         <header class="top-header">
             <div class="header-cell-left">
                 <div class="viewNav">
@@ -35,7 +35,7 @@
             </div>
             <div class="header-cell-right">
                 <span class="accountBar">
-                    <a href="#">Sign In</a>
+                    <a style="cursor: pointer;" href="users/sign_in.php">Sign Out</a>
                     <span class="profile-image">
                         <img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xap1/v/t1.0-1/p160x160/10431555_10205826534729405_5977811385716894905_n.jpg?oh=f78cad49ac921adb5d7a0aa02964a04a&oe=560FE31D&__gda__=1448108744_98a264994934511489e61dc343507899">
                     </span>  
@@ -52,9 +52,9 @@
                     <li id="link-chart">
                          <a>Chart</a>
                      </li>
-                    <li id="link-settings">
+<!--                     <li id="link-settings">
                         <a>Settings</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>
@@ -62,8 +62,5 @@
             <div class="section-header">
             </div>
         </div>
-        <!-- <div id="btn-addtable">+</div> -->
-        <!-- <div class="popup"></div> -->
-        <!-- <div id="btn-add">+</div> -->
     </body>
 </html>

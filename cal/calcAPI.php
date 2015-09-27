@@ -97,7 +97,7 @@ class calcAPI
 			return -1;
 		else
 		{
-			return ($total_eatingTime / $counter);
+			return round(($total_eatingTime / $counter),2);
 		}
 	}
 
@@ -185,7 +185,7 @@ class calcAPI
 		if($chair == 0)
 			return -1;
 		else
-			return ($counter / $chair);
+			return round(($counter / $chair),2);
 	}
 
 	//熱門座位
@@ -263,7 +263,7 @@ class calcAPI
 		{
 			return $temp_array;
 		}else{
-			$temp_array["avg_temp"] = $sum_temp / $datacount;
+			$temp_array["avg_temp"] = round(($sum_temp / $datacount),2);
 			return $temp_array;	
 		}
 	}
@@ -368,7 +368,12 @@ class calcAPI
 			}
 			//var_dump($seats);
 		}
-		return array_search(max($seats), $seats);
+		if(count($seats) <= 0)
+			return -1;
+		else{
+			$driver_mac = array_search(max($seats), $seats);
+		}
+		return $driver_mac;
 	}
 	//司機是否超時
 	public function calc_driver_tired($filePath)
@@ -391,7 +396,8 @@ class calcAPI
 		        }
 				if($during >= 600)
 				{
-					array_push($tired,$during - 600);
+					$tmp = round($during - 600,2);
+					array_push($tired,$tmp);
 				}
 		    }
 		    fclose($fileHandle);

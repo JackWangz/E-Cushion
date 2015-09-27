@@ -56,30 +56,30 @@
 
 <html>
 	<head>
-		<title>E-Cushion 會員登入</title>
+		<title>E-Cushion - Sign In</title>
 		<meta charset="utf8" />
 		<link rel=stylesheet type="text/css" href="../css/sign_page.css"> 
-		<link href='https://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
 		<form class="main signin" action="sign_in.php" method="post" name="login">
 			<table class="form">
 				<tr><td colspan="2">
-					<input class="form-item input1" name="account" id="account" type="text" placeholder="帳號ID Account" />
+					<input class="form-item input1" name="account" id="account" type="text" placeholder="Account" autofocus/>
 				</td></tr>
 				<tr><td colspan="2">
-					<input class="form-item input1" name="password" id="password" type="password" placeholder="密碼 Password"/>
+					<input class="form-item input1" name="password" id="password" type="password" placeholder="Password"/>
 				</td></tr>
 				<tr>
-					<td><input class="form-item input1" name="checknum" id="checknum" type="text" placeholder="請輸入驗證碼"/></td>
+					<td><input class="form-item input1" name="checknum" id="checknum" type="text" placeholder="Type the characters"/></td>
 					<td><img class="form-item captcha" src="captcha_pic.php"></td>
 				</tr>
 				<tr><td></td></tr>
 				<tr><td colspan="2">
-					<button class="form-item button1" name="login" type="submit">登入</button>
+					<button class="form-item button1" name="login" type="submit"> Sign In</button>
 				</td></tr>
 				<tr><td colspan="2">
-					<div class="form-item message1" name="register">還不是會員嗎？　<a href="register.php">加入會員</a></div>
+					<div class="form-item message1" name="register">Hey, I don’t have an account.<a href="register.php"> Sign Up</a>
+					<!--<br/>沒有會員嗎？ 立即註冊--> </div>
 				</td></tr>
 				<tr><td colspan="2">
 					<div class="form-item message2">

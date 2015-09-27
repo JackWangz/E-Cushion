@@ -53,6 +53,34 @@ function getpassedweek(){
 	}
 	return weekarr;
 }
+function getthismonth(){
+	var tmpDate = new Date();
+	month = tmpDate.getMonth()+1;
+	if(month.toString().length<2){
+		monthstr = "0"+month.toString();
+	}
+	return "avg-month-"+monthstr+".txt";
+}
+function getthisweek(){
+	function whichweek(){
+		var tmpDate = new Date();
+		today = tmpDate.getDate();
+		daysago = today-1;
+		tmpDate.setDate(tmpDate.getDate() -daysago);
+		firstday=tmpDate.getDay();
+		if(today<=6-firstday+1){
+			return 1;
+		}
+		return Math.ceil(((today-(6-firstday+1))/7+1));
+	}
+	var tmpDate = new Date();
+	month = (tmpDate.getMonth()+1).toString();
+	if(month.length<2){
+		month = "0"+month;
+	}
+	return "avg-week-"+month+"-"+whichweek()+".txt";
+
+}
 
 function lastWeekArray(){
 	var lastWeekArray = [];
@@ -204,3 +232,132 @@ function parse_most_hot(str){
 // function pares_update_time(){
 // 目前看起來不需要
 // }
+
+
+function parse_people_label(str){
+
+	getlabel = str.split("\"");
+	label = new Array();
+	for(var i = 1 ; i <getlabel.length;i=i+2){
+		label.push(getlabel[i]);
+	}
+	return label;
+}
+
+function parse_people_value(str){
+	length = str.split(":").length-1;
+	value = new Array();
+	for(var i = 1 ; i <=length ; i++){
+		split = str.split(":");
+		if(i == length){
+			val = split[i].split("}")[0];
+		}else{
+		val = split[i].split(",")[0];
+		}
+		value.push(parseInt(val));
+	}
+	return value;
+}
+function parse_sit_time_label(str){
+
+	getlabel = str.split("\"");
+	label = new Array();
+	for(var i = 1 ; i <getlabel.length;i=i+2){
+		label.push(getlabel[i]);
+	}
+	return label;
+}
+
+function parse_sit_time_value(str){
+	console.log(str);
+	length = str.split(":").length-1;
+	value = new Array();
+	for(var i = 1 ; i <=length ; i++){
+		split = str.split(":");
+		if(i == length){
+			val = split[i].split("}")[0];
+		}else{
+		val = split[i].split(",")[0];
+		}
+		value.push(parseInt(val));
+	}
+	return value;
+}
+
+function parse_avg_sitting_time(str){
+	avg_sitting_time = str.split("m");
+	return parseFloat(avg_sitting_time[0]);
+}
+function parse_G_ID(str){
+	value = new Array();
+	key = new Array();
+	split = str.split(",");
+	finalvalue = new Array();
+	for(var i = 0 ; i<split.length; i++){
+		getkey = split[i].split("\"")[1];
+		key.push(getkey);
+	}
+	split = str.split("\":");
+	for(var i =1; i<split.length; i++){
+		if(i==split.length-1){
+			getvalue = split[i].split(",")[0].split("}")[0];
+		}else{
+			getvalue = split[i].split(",")[0];
+		}
+		value.push(parseInt(getvalue));
+	}
+	for(var i =0 ; i<key.length; i++){
+		finalvalue[key[i]] = value[i];
+	}
+	return finalvalue;
+	//回傳的array key值是字元，如"1"，非整數0.1.2.3.4....
+}
+
+function parse_driver(str){
+	var data = str.split(",");
+	var driver = new Object();
+	for(var i = 0; i < data.length; i++){
+		key=data[i].split("\":\"")[0].split("\"")[1];
+		value=data[i].split("\":\"")[1].split("\"")[0];
+		driver[key]=value;
+	}
+	return driver;
+}
+
+function parse_over_time(str){
+	var data = str.split("],");
+	var over_time = new Object();
+	for(var i = 0; i<data.length; i++){
+		key=data[i].split("\":")[0].split("\"")[1];
+		value = data[i].split("\":")[1].split("[")[1].split("]")[0];
+		if(value==""){
+			//do nothing
+		}else{
+			over_time[key]=parseFloat(value);
+		}
+	}
+	return over_time;
+}
+function parse_over_time_manydays(str){
+	var data = str.split("],");
+	var over_time = new Object();
+	for(var i = 0; i<data.length; i++){
+		key=data[i].split("\":")[0].split("\"")[1];
+		valuearray = new Array();
+		sum = 0;
+		if(data[i].split(":[")[1]==""){
+			continue;
+		}
+		if(i==data.length-1){
+			valuearray = data[i].split(":[")[1].split("]")[0].split(",");
+		}else{
+			valuearray = data[i].split(":[")[1].split(",");
+		}
+
+		for(var j = 0; j<valuearray.length;j++){
+			sum = sum + parseFloat(valuearray[j]);
+		}
+		over_time[key]=sum;
+	}
+	return over_time;
+}

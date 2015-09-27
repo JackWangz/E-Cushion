@@ -1,6 +1,6 @@
-document.write ("<script language='javascript' src='mychart.js'></script>");
-document.write ("<script language='javascript' src='StringToData.js'></script>");
-document.write ("<script language='javascript' src='Chart.js'></script>");
+document.write ("<script language='javascript' src='../mychart.js'></script>");
+document.write ("<script language='javascript' src='../StringToData.js'></script>");
+document.write ("<script language='javascript' src='../Chart.js'></script>");
 document.write ("<script language='javascript' src='ajax_showdata.js'></script>");
 
 //JQuery
@@ -49,6 +49,7 @@ $(document).ready(function(){
 			$(this).parents('#div-createMap').remove();
 			removeMap();
 			createMap(row, row);
+	      	updateMapInfo();
 			showMapTool();
 	});
 
@@ -57,6 +58,7 @@ $(document).ready(function(){
 	    function(event) {
 	  		event.preventDefault();
 	  		event.stopPropagation();
+
 	  		var A_MAC   = $(this).data('amac'),
 	  		    groupNo = $(this).parent('div').data('group');
 	  		$(this).addClass('seatClicked');
@@ -70,6 +72,7 @@ $(document).ready(function(){
 	  .on('click', '.grouped',
 	    function(event) {
 	  		event.preventDefault();
+	  		event.stopPropagation();
 	  		var groupNo = $(this).data('group');
 	  		$(this).addClass('groupClicked');
 	  	    show_group_information(groupNo);
@@ -81,6 +84,7 @@ $(document).ready(function(){
 	     function(event) {
 
 	         if($('input:checked').val() == 'Group'){
+	         	 $('#img-table').attr('draggable', 'false');
 	             $(document)
 	                  .bind(
 	                        "dragstart",
@@ -110,20 +114,26 @@ $(document).ready(function(){
 		      }
 		      else if($('input:checked').val() == 'Seat')
 		      {
+		      		$('#img-table').attr('draggable', 'true');
 		            $(document).unbind();
 		      }
     });
 	
 	//Area options
-	$('body')
+	$('body')	
 	  .on('click', '.nav-area>li',
 	  	 function(event) {
 		  	event.preventDefault();
 		  	var areaName = $(this).find('a').html();
+
+		  	//Avoid repeatedly showing spinner
+		  	if($('div').hasClass('spinner')) return;
+
 		  	if(areaName == '+') return;
 		  	if(typeof areaName !== 'undefined'){
 		  		loadMap(areaName);
 		    }
+		    $(this).siblings('li').attr('disabled', true);
 		    $(this).siblings('li').removeClass('selected');
 		    $(this).siblings('li').find('a').removeClass('selected');
 		    $(this).addClass('selected');
@@ -135,6 +145,38 @@ $(document).ready(function(){
 	  .on('click', 'li.chart-function',
 	  	function(event) {
 			event.preventDefault();
+
+//		
+			var target = $(this).find('a').html();
+			var tar = "";
+			
+			//Driver case
+			if(target == 'Driver'){
+				$('.nav-chartTiming').remove();
+				var Timing_array = ['Driver Info', 'Today', 'Compare Weeks'];
+				var li_element = "";
+				$.each(Timing_array, function(index, val) {
+					li_element += "<li class='chart-timing'><a>" + val + "</a></li>";
+				});
+
+				$('<ul></ul>').addClass('nav-chartTiming')
+							  .append(li_element)
+							  .appendTo('.section-header');
+			}else{
+				$('.nav-chartTiming').remove();
+				var Timing_array = ['Today', 'Week', 'Same Day Weeks Ago', 'Compare Weeks', 'Compare Months'];
+				var li_element = "";
+				$.each(Timing_array, function(index, val) {
+					li_element += "<li class='chart-timing'><a>" + val + "</a></li>";
+				});
+
+				$('<ul></ul>').addClass('nav-chartTiming')
+							  .append(li_element)
+							  .appendTo('.section-header');
+			}
+//
+
+
 			$('.section-content').remove();
 			$(this).siblings().removeClass('selected');
 			$(this).addClass('selected');
@@ -144,8 +186,8 @@ $(document).ready(function(){
 								.addClass('selected');
 
 			$('<div class="section-content"></div>').appendTo('.right-container')
-			var target = $(this).find('a').html();
-			var tar = "";
+			// var target = $(this).find('a').html();
+			// var tar = "";
 
 			switch(target){
 					case 'Dinning Time':
@@ -159,13 +201,29 @@ $(document).ready(function(){
 						break;
 					case 'Turn Rate':
 						tar += "turn_rate";
-				}
+						break;
+					case 'People':
+						tar += "people";
+						break;
+					case 'Come Taxi':
+						tar += "come_taxi";
+						break;
+					case 'Sit Time':
+						tar += "sit_time";
+						break;
+					case 'Leave Taxi':
+						tar += "leave_taxi";
+						break;
+					case 'Driver':
+						tar += "driver";
+			}
 
 			$('<div id="' + tar + '_today" class="chart-cell">' +
-				'<canvas style="float:left" id="today" width="300" height="400"></canvas>' +
+				'<canvas style="float:left; margin: 0 20%;" id="today" width="300" height="400"></canvas>' +
 			'</div>')
 			.appendTo('.section-content');
 
+			//Restaurant case
 			if(target == 'Dinning Time')
 			{eating_time_today();}
 			else if(target == 'Come Store Rate')
@@ -174,6 +232,26 @@ $(document).ready(function(){
 			{leave_store_today();}
 			else if(target == 'Turn Rate')
 			{turn_rate_today();}
+
+			//Taxi case
+			else if(target == 'People')
+			{people_today();}
+			else if(target == 'Come Taxi')
+			{come_taxi_today();}
+			else if(target == 'Sit Time')
+			{sit_time_today();}
+			else if(target == 'Leave Taxi')
+			{leave_taxi_today();}
+			else if(target == 'Driver'){
+				$('.chart-cell').remove();
+				loadDriverInfo(); 
+				return;
+			}
+
+			//Chart title on the bottom
+			$('<div></div>').html('<b>' + target + '</b>  ( Today )')
+				.addClass('chart-meta')
+				.appendTo('div.chart-cell:last-child');
 	});
 
 	//Chart timing options
@@ -183,6 +261,7 @@ $(document).ready(function(){
 			event.preventDefault();
 			var function_target = $('.chart-function.selected').find('a').html();
 			var target = $(this).find('a').html();
+
 
 			if($(this).hasClass('selected')){
 				$(this).removeClass('selected');
@@ -201,6 +280,21 @@ $(document).ready(function(){
 						break;
 					case 'Turn Rate':
 						tar += "turn_rate";
+						break;
+					case 'People':
+						tar += "people";
+						break;
+					case 'Come Taxi':
+						tar += "come_taxi";
+						break;
+					case 'Sit Time':
+						tar += "sit_time";
+						break;
+					case 'Leave Taxi':
+						tar += "leave_taxi";
+						break;
+					case 'Driver':
+						tar += "driver";
 				}
 
 				switch(target){
@@ -218,16 +312,22 @@ $(document).ready(function(){
 						break;
 					case 'Compare Months':
 						tar += "_compare_months";
+						break;
+					case 'Driver Info':
+						tar += "_info";
 				}
-
-				$('div[id="' + tar +'"]').remove();
 				console.log(tar);
+				$('*[id="' + tar +'"]').remove();
 				return;
 			}
 
 			$(this).addClass('selected');
 
 
+			if(target =='Driver Info'){
+				loadDriverInfo();
+				return;
+			}
 			if(target == 'Today'){
 
 				switch(function_target){
@@ -240,26 +340,60 @@ $(document).ready(function(){
 						break;
 					case 'Come Store Rate':
 						$('<div id="come_store_today" class="chart-cell">' +
-							'<canvas style="float:left" id="today" width="300" height="400"></canvas>' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
 						'</div>')
 						.appendTo('.section-content');
 						come_store_today();
 						break;
 					case 'Leave Store Rate':
 						$('<div id="leave_store_today" class="chart-cell">' +
-							'<canvas style="float:left" id="today" width="300" height="400"></canvas>' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
 						'</div>')
 						.appendTo('.section-content');
 						leave_store_today();
 						break;
 					case 'Turn Rate':
 						$('<div id="turn_rate_today" class="chart-cell">' +
-							'<canvas style="float:left" id="today" width="300" height="400"></canvas>' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
 						'</div>')
 						.appendTo('.section-content');
 						turn_rate_today();
+					case 'People':
+						$('<div id="people_today" class="chart-cell">' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
+						'</div>')
+						.appendTo('.section-content');
+						people_today();
+						break;
+					case 'Come Taxi':
+						$('<div id="come_taxi_today" class="chart-cell">' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
+						'</div>')
+						.appendTo('.section-content');
+						come_taxi_today();
+						break;
+					case 'Leave Taxi':
+						$('<div id="leave_taxi_today" class="chart-cell">' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
+						'</div>')
+						.appendTo('.section-content');
+						leave_taxi_today();
+						break;
+					case 'Sit Time':
+						$('<div id="sit_time_today" class="chart-cell">' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
+						'</div>')
+						.appendTo('.section-content');
+						sit_time_today();
+						break;
+					case 'Driver':
+						$('<div id="driver_today" class="chart-cell">' +
+							'<canvas style="float:left; margin: 0px 20%;" id="today" width="300" height="400"></canvas>' +
+						'</div>')
+						.appendTo('.section-content');
+						overtime_today();
 				}
-
+			//Week
 			}else if(target == 'Week'){
 				switch(function_target){
 					case "Dinning Time":
@@ -291,8 +425,44 @@ $(document).ready(function(){
 						'</div>')
 						.appendTo('.section-content');
 						turn_rate_seven_days();
+					case 'People':
+						$('<div id="people_week" class="chart-cell">' +
+							'<div style="float:left" id="seven_days" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						people_seven_days();
+						break;
+					case 'Come Taxi':
+						$('<div id="come_taxi_week" class="chart-cell">' +
+							'<canvas style="float:left" id="seven_days" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						come_taxi_seven_days();
+						break;
+					case 'Leave Taxi':
+						$('<div id="leave_taxi_week" class="chart-cell">' +
+							'<canvas style="float:left" id="seven_days" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						leave_taxi_seven_days();
+						break;
+					case 'Sit Time':
+						$('<div id="sit_time_week" class="chart-cell">' +
+							'<div style="float:left" id="seven_days" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						sit_time_seven_days();
+					// 	break;
+					// case 'Driver':
+					// 	$('<div id="driver_today" class="chart-cell">' +
+					// 		'<canvas style="float:left" id="seven_days" width="300" height="400"></canvas>' +
+					// 	'</div>')
+					// 	.appendTo('.section-content');
+					// 	who_overtime_this_week();
 				}
-
+			//Same Day Weeks ago
 			}else if(target == 'Same Day Weeks Ago'){
 				switch(function_target){
 					case "Dinning Time":
@@ -324,7 +494,44 @@ $(document).ready(function(){
 						'</div>')
 						.appendTo('.section-content');
 						turn_rate_weeks_ago_same_day();
+					case 'People':
+						$('<div id="people_same_day" class="chart-cell">' +
+							'<div style="float:left" id="weeks_ago_same_day" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						people_weeks_ago_same_day();
+						break;
+					case 'Come Taxi':
+						$('<div id="come_taxi_same_day" class="chart-cell">' +
+							'<canvas style="float:left" id="weeks_ago_same_day" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						come_taxi_weeks_ago_same_day()
+						break;
+					case 'Leave Taxi':
+						$('<div id="leave_taxi_same_day" class="chart-cell">' +
+							'<canvas style="float:left" id="weeks_ago_same_day" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						leave_taxi_weeks_ago_same_day()
+						break;
+					case 'Sit Time':
+						$('<div id="sit_time_same_day" class="chart-cell">' +
+							'<div style="float:left" id="weeks_ago_same_day" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						sit_time_weeks_ago_same_day()
+						break;
+					// case 'Driver':
+					// 	$('<div id="driver_same_day" class="chart-cell">' +
+					// 		'<canvas style="float:left" id="weeks_ago_same_day" width="300" height="400"></canvas>' +
+					// 	'</div>')
+					// 	.appendTo('.section-content');
+						// who_overtime_this_week();
 				}
+			//Comepare Weeks
 			}else if(target == 'Compare Weeks'){
 				switch(function_target){
 					case "Dinning Time":
@@ -356,7 +563,44 @@ $(document).ready(function(){
 						'</div>')
 						.appendTo('.section-content');
 						turn_rate_compare_weeks();
+					case 'People':
+						$('<div id="people_compare_weeks" class="chart-cell">' +
+							'<div style="float:left" id="compare_weeks" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						people_compare_weeks();
+						break;
+					case 'Come Taxi':
+						$('<div id="come_taxi_compare_weeks" class="chart-cell">' +
+							'<canvas style="float:left" id="compare_weeks" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						come_taxi_compare_weeks();
+						break;
+					case 'Leave Taxi':
+						$('<div id="leave_taxi_compare_weeks" class="chart-cell">' +
+							'<canvas style="float:left" id="compare_weeks" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						leave_taxi_compare_weeks();
+						break;
+					case 'Sit Time':
+						$('<div id="sit_time_compare_weeks" class="chart-cell">' +
+							'<div style="float:left" id="compare_weeks" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						sit_time_compare_weeks();
+						break;
+					case 'Driver':
+						$('<div id="driver_compare_weeks" class="chart-cell">' +
+							'<div style="float:left" id="compare_weeks" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						overtime_compare_weeks();
 				}
+			//Compare months
 			}else if(target == 'Compare Months'){
 				switch(function_target){
 					case "Dinning Time":
@@ -388,8 +632,49 @@ $(document).ready(function(){
 						'</div>')
 						.appendTo('.section-content');
 						turn_rate_compare_months();
+					case 'People':
+						$('<div id="people_compare_months" class="chart-cell">' +
+							'<div style="float:left" id="compare_months" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						people_compare_months();
+						break;
+					case 'Come Taxi':
+						$('<div id="come_taxi_compare_months" class="chart-cell">' +
+							'<canvas style="float:left" id="compare_months" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						come_taxi_compare_months();
+						break;
+					case 'Leave Taxi':
+						$('<div id="leave_taxi_compare_months" class="chart-cell">' +
+							'<canvas style="float:left" id="compare_months" width="300" height="400"></canvas>' +
+							'<div style="float:left"></div>' + 
+						'</div>')
+						.appendTo('.section-content');
+						leave_taxi_compare_months();
+						break;
+					case 'Sit Time':
+						$('<div id="sit_time_compare_months" class="chart-cell">' +
+							'<div style="float:left" id="compare_months" width="300" height="400"></div>' +
+						'</div>')
+						.appendTo('.section-content');
+						sit_time_compare_months();
+						break;
+					// case 'Driver':
+					// 	$('<div id="driver_compare_months" class="chart-cell">' +
+					// 		'<canvas style="float:left" id="compare_months" width="300" height="400"></canvas>' +
+					// 	'</div>')
+					// 	.appendTo('.section-content');
+						// driver_compare_months();
 				}
 			}
+
+			$('<div></div>').html('<b>' + function_target + '</b>  ( ' + target + ' )')
+							.addClass('chart-meta')
+							.appendTo('div.chart-cell:last-child');
+
 	});
 
 	$('body')
@@ -397,7 +682,7 @@ $(document).ready(function(){
 	    function(event) {
 	  	  event.preventDefault();
 	  	  	var form_popup = "<div id='popup'><form id='form-createArea'>" +
-			"<ul><li>Area Name<input id='input-areaName' placeholder='Area...' type='text' required></li>" +
+			"<ul><li>Area Name<input id='input-areaName' placeholder='A, B, Outdoor, ...' type='text' required></li>" +
 			"<li>Pi MAC<input id='input-piMac' placeholder='AA:BB:CC:DD' type='text' required></li></ul>" +
 	  		"<input id='btn-createArea' type='button' value='Create'/>  " +
 	  		"<input id='btn-close' type='button' value='Cancel'/><br>" +
@@ -413,6 +698,7 @@ $(document).ready(function(){
 	    function(event) {
 		  	event.preventDefault();
 		  	saveMapInfo();
+		  	updateMapInfo();
 	  });
 
 	$('body')
@@ -443,7 +729,8 @@ $(document).ready(function(){
 			type: 'POST',
 			data: {target: 'pi', areaName: area, piMac: pimac},
 			success: function(msg){	
-	      		showMessage('success', 'New area updated!');
+	      		showMessage('success', 'New area *' + area + '* added!');
+	      		loadSeatTablePage();
 	        },
 	        error:function(xhr, ajaxOptions, thrownError){ 
 	          console.log(xhr.responseText);
@@ -472,6 +759,55 @@ $(document).ready(function(){
 		$(this).parents('div').remove();
 	});
 
+
+	$('body')
+	  .on('click', '.remove-area', 
+	  	function(event) {
+		event.preventDefault();
+		var area    = $('.nav-area a.selected').html();
+		var tool = "<div id='popup'><form id='form-buildtable'><ul>" +
+					"<li class='u-textCenter'>Wanna delete " + area +" ? </li></ul>" +
+					"<button id='btn-remove-area'>Remove</button> <button id='btn-close'>Close</button>" + 
+					"</form></div>";
+
+		$('body').append(tool);
+		$('#popup').hide()
+				   .show()
+				   .addClass('visible');
+	});
+
+	//Delete area
+	$('body')
+	  .on('click', '#btn-remove-area', 
+	  	function(event) {
+		event.preventDefault();
+		var area    = $('.nav-area a.selected').html();
+		var amacOnMap  = {};
+		var piMac = $('ul.nav-area li.selected').data('pimac');
+
+		$.each($('.map-seat'), function(index, val) {
+			if(typeof $(val).data('amac') !== 'undefined')
+				amacOnMap[index] = $(val).data('amac');
+		});
+	
+		$.ajax({
+	      url: "remove.php",
+	      type:"POST",
+	      data: {target: 'area', pimac: piMac, amac: amacOnMap, areaName: area},
+	      success: function(msg){
+	      	console.log(msg);
+	      	loadSeatTablePage();
+			showMessage('success', 'Area ' + area + ' Removed!');
+	      },
+	      error:function(xhr, ajaxOptions, thrownError){ 
+	        console.log(xhr.responseText);
+	        console.log(thrownError); 
+	      }
+	    });
+
+		$(this).parents('div').remove();
+	});
+
 	$('body')
 	  .on('click', '#btn-remove-group', 
 	  	function(event) {
@@ -479,7 +815,7 @@ $(document).ready(function(){
 		var groupNo = $('.groupClicked').data('group');
 		var area    = $('.nav-area a.selected').html();
 		var selectedGroup = $('.map-entity.grouped[data-group=' + groupNo + ']');
-		var amac = [];
+		var a_mac = [];
 
 		$.each(selectedGroup, function(index, val) {
 			var a_mac = $(val).find('.map-seat').data('amac');
@@ -492,7 +828,7 @@ $(document).ready(function(){
 		$.ajax({
 	      url: "remove.php",
 	      type:"POST",
-	      data: {target: 'group', groupn: groupNo, areaName: area, amac},
+	      data: {target: 'group', groupn: groupNo, areaName: area, amac: a_mac},
 	      success: function(msg){
 	      	//Clean group entity and seat
 	      	selectedGroup.empty()
@@ -586,12 +922,14 @@ $(document).ready(function(){
 		      data: {amac: a_mac},
 		      success: function(msg){
 		      	console.log('Status Changed!');
+		      	updateMapInfo();
 		      },
 		      error:function(xhr, ajaxOptions, thrownError){ 
 		        console.log(xhr.responseText);
 		        console.log(thrownError); 
 		      }
 		    });
+		    
 			$(this).parents('div').remove();
 	});	
 
@@ -605,10 +943,10 @@ $(document).ready(function(){
 			$.ajax({
 		      url: "insert.php",
 		      type:"POST",
-		      data: {table_name: 'bind', groupn: groupNo, amac: a_mac},
+		      data: {target: 'bind', groupn: groupNo, amac: a_mac},
 		      success: function(msg){
-		      	console.log(msg);
 		      	$('.seatClicked').attr('data-amac', a_mac);
+		      	updateMapInfo();
 		      	saveMapInfo();
 		      },
 		      error:function(xhr, ajaxOptions, thrownError){ 
@@ -621,25 +959,17 @@ $(document).ready(function(){
 		    	console.log("Binding completed!");
 		    });
 
-
-		    
 			$(this).parents('div').remove();
 	});	
 
-	$('body')
-	  .on('click', 'ul.title-area>li', 
-	  	function(event) {
-			event.preventDefault();
-			var areaNow = $('div.title-area').attr('data-areaname');
-			var areaTochagne = $(this).find('a').html().substring(5);
 
+	// $('body')
+	//   .on('click', 'div.map-info', 
+	//   	function(event) {
+	// 		event.preventDefault();
+	// 		updateMapInfo();
 
-			$(this).find('a').html("Area " + areaNow);
-			$('div.title-area').attr('data-areaname', areaTochagne);
-			$('div.title-area>a').html("Area " + areaTochagne);
-
-			updateTable(areaTochagne);
-	});
+	// });
 
 	$('body')
 	  .on('click', '#link-table', 
@@ -656,7 +986,6 @@ $(document).ready(function(){
 	  	function(event) {
 		  	event.preventDefault();
 		  	toggleLeftContainer();
-
 		  	loadChartPage();
 	});
 
@@ -671,7 +1000,129 @@ $(document).ready(function(){
 			// $('#btn-addtable').hide();
 	});
 
+	// /*
+	//  * Replace all SVG images with inline SVG
+	//  */
+	// $('img.svg').each(function(){
+	//     var $img = $(this);
+	//     var imgID = $img.attr('id');
+	//     var imgClass = $img.attr('class');
+	//     var imgURL = $img.attr('src');
 
+	//     $.get(imgURL, function(data) {
+	//         // Get the SVG tag, ignore the rest
+	//         var $svg = $(data).find('svg');
+
+	//         // Add replaced image's ID to the new SVG
+	//         if(typeof imgID !== 'undefined') {
+	//             $svg = $svg.attr('id', imgID);
+	//         }
+	//         // Add replaced image's classes to the new SVG
+	//         if(typeof imgClass !== 'undefined') {
+	//             $svg = $svg.attr('class', imgClass+' replaced-svg');
+	//         }
+
+	//         // Remove any invalid XML tags as per http://validator.w3.org
+	//         $svg = $svg.removeAttr('xmlns:a');
+
+	//         // Check if the viewport is set, if the viewport is not set the SVG wont't scale.
+	//         if(!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
+	//             $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'));
+	//         }
+
+	//          // Replace image with new SVG
+	//          $img.replaceWith($svg);
+	//          // .attr("style", "fill: #fff");
+	//     }, 'xml');
+
+	//  //    $('.section-function>ul>li').hover(function() {
+	// 	// 	    var el = $(this);
+	// 	// 	    var svg = el.find('svg path');
+	// 	// 	    svg.attr("style", "fill: #f46353");
+	// 	// 	}, function() {
+	// 	// 	    var el = $(this);
+	// 	// 	    var svg = el.find('svg path');
+	// 	// 	    svg.attr("style", "fill: #fff");
+	// 	// });
+
+	// 	// $('.svg').hover(function(){
+	// 	// 	var el = $(this);
+	// 	// 	var svg = el.find('svg path');
+	// 	// 	svg.attr("style", "fill: #f46353");
+	// 	//    }, function(){
+	// 	// 	    var el = $(this);
+	// 	// 	    var svg = el.find('svg path');
+	// 	// 	    svg.attr("style", "fill: #fff");
+	// 	// });
+	// });
+
+	$('body')
+	  .on('click', '.chart-work-option>li>a', 
+	  	function(event) {
+
+			event.preventDefault();
+			if($(this).hasClass('clicked')){
+				$(this).addClass('clicked');
+				$('.nav-filters').slideToggle('slow');
+			}else{
+				$(this).removeClass('clicked');
+				$('.nav-filters').slideToggle('slow');
+			}
+	});
+
+	svgFormater();
+
+});
+
+
+/***
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*						
+*
+*
+*
+*
+*
+*
+*	↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓　SELF-DEFINED FUNCTION BELOW　↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+*
+*	
+**/
+
+
+//Caculate the result of subtraction of timestamp with the format(HH:MM:SS).
+function calcTimeDifferent(t){
+	var d = Math.floor(t / 86400);
+	t %= 86400;
+	var h = Math.floor(t / 3600);
+	t %= 3600;
+	var m = Math.floor(t / 60);
+	return  (d == 0 ? "" : d + " 天 ") + (h == 0 ? "" : h + " 小時 ") + (m + " 分鐘");
+}		
+
+
+Date.prototype.today = function () { 
+    return this.getFullYear() + "/" + 
+    		(((this.getMonth()+1) < 10) ? "0" : "") +
+    		(this.getMonth() + 1) + "/" + 
+    		((this.getDate() < 10) ? "0" : "" ) + 
+    		this.getDate();
+}
+
+// For the time now
+Date.prototype.timeNow = function () {
+     return ((this.getHours() < 10) ? "0" : "") + this.getHours() +":"+ ((this.getMinutes() < 10) ? "0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}
+
+function svgFormater(){
 	/*
 	 * Replace all SVG images with inline SVG
 	 */
@@ -727,58 +1178,7 @@ $(document).ready(function(){
 		// 	    svg.attr("style", "fill: #fff");
 		// });
 	});
-
-	$('body')
-	  .on('click', '.chart-work-option>li>a', 
-	  	function(event) {
-
-			event.preventDefault();
-			if($(this).hasClass('clicked')){
-				$(this).addClass('clicked');
-				$('.nav-filters').slideToggle('slow');
-			}else{
-				$(this).removeClass('clicked');
-				$('.nav-filters').slideToggle('slow');
-			}
-	});
-
-
-
-});
-
-
-/***
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*						
-*
-*
-*
-*
-*
-*
-*	↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓　SELF-DEFINED FUNCTION BELOW　↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-*
-*	
-**/
-
-
-//Caculate the result of subtraction of timestamp with the format(HH:MM:SS).
-function calcTimeDifferent(t){
-	var d = Math.floor(t / 86400);
-	t %= 86400;
-	var h = Math.floor(t / 3600);
-	t %= 3600;
-	var m = Math.floor(t / 60);
-	return  (d == 0 ? "" : d + " 天 ") + (h == 0 ? "" : h + " 小時 ") + (m + " 分鐘");
-}		
+}
 
 function getRandomTime(){
 	return Math.floor(Math.random() * 1500) + 500;
@@ -941,9 +1341,9 @@ function loadSeatTablePage(){
 
 			var li_element = "";
 			$.each(msg, function(index, val) {
-				li_element += "<li><center><a>" + val + "</a></center></li>";
+				li_element += "<li data-pimac=" + val[1] +"><a>" + val[0] + "</a></li>";
 			});
-				li_element += "<li id='btn-addArea'><center><a>+</a></center></li>"
+				li_element += "<li id='btn-addArea'><a>+</a></li>"
 			//Load area element
 			$('<ul></ul>').addClass('nav-area')
 						  .append(li_element)
@@ -973,36 +1373,112 @@ function loadChartPage(){
 	$('.section-tools').remove();
 	showLoadingSpinner();
 
-	setTimeout(function(){
-		hideLoadingSpinner();
-		var Chartfunction_array = ['Dinning Time', 'Come Store Rate', 'Leave Store Rate', 'Turn Rate'];
-		var Timing_array   = ['Today', 'Week', 'Same Day Weeks Ago', 'Compare Weeks', 'Compare Months'];
+	var userType;
 
-		var li_element = "";
-		$.each(Chartfunction_array, function(index, val) {
-			li_element += "<li class='chart-function'><a>" + val + "</a></li>";
-		});
-		$('.section-header').addClass('chart'); 
-		//Load chart function elements
-		$('<ul></ul>').addClass('nav-chart')
-					  .append(li_element)
-					  .appendTo('.section-header');
+	$.ajax({
+		url: 'getDataFromDB.php',
+		type: 'POST',
+		dataType: 'JSON',
+		data: {target: 'Uid'},
+		success: function(msg){
+			userType = msg[0];
+			//Check type
+			if(userType == '餐廳'){
+				setTimeout(function(){
+					hideLoadingSpinner();
+					var Chartfunction_array = ['Dinning Time', 'Come Store Rate', 'Leave Store Rate', 'Turn Rate'];
+					var Timing_array   = ['Today', 'Week', 'Same Day Weeks Ago', 'Compare Weeks', 'Compare Months'];
 
-		li_element = "";
-		$.each(Timing_array, function(index, val) {
-			li_element += "<li class='chart-timing'><a>" + val + "</a></li>";
-		});
+					var li_element = "";
+					$.each(Chartfunction_array, function(index, val) {
+						li_element += "<li class='chart-function'><a>" + val + "</a></li>";
+					});
+					$('.section-header').addClass('chart'); 
+					//Load chart function elements
+					$('<ul></ul>').addClass('nav-chart')
+								  .append(li_element)
+								  .appendTo('.section-header');
 
-		$('<ul></ul>').addClass('nav-chartTiming')
-					  .append(li_element)
-					  .appendTo('.section-header');
+					li_element = "";
+					$.each(Timing_array, function(index, val) {
+						li_element += "<li class='chart-timing'><a>" + val + "</a></li>";
+					});
 
-	}, getRandomTime());
+					$('<ul></ul>').addClass('nav-chartTiming')
+								  .append(li_element)
+								  .appendTo('.section-header');
 
+				}, getRandomTime());
+			}
+			else if(userType == '計程車'){
+				setTimeout(function(){
+					hideLoadingSpinner();
+					var Chartfunction_array = ['Driver','People', 'Come Taxi', 'Leave Taxi', 'Sit Time'];
+					var Timing_array   = ['Today', 'Week', 'Same Day Weeks Ago', 'Compare Weeks', 'Compare Months'];
+
+					var li_element = "";
+					$.each(Chartfunction_array, function(index, val) {
+						li_element += "<li class='chart-function'><a>" + val + "</a></li>";
+					});
+					$('.section-header').addClass('chart'); 
+					//Load chart function elements
+					$('<ul></ul>').addClass('nav-chart')
+								  .append(li_element)
+								  .appendTo('.section-header');
+
+					li_element = "";
+					$.each(Timing_array, function(index, val) {
+						li_element += "<li class='chart-timing'><a>" + val + "</a></li>";
+					});
+
+					$('<ul></ul>').addClass('nav-chartTiming')
+								  .append(li_element)
+								  .appendTo('.section-header');
+
+					//
+					loadDriverInfo();	  
+
+				}, getRandomTime());
+			}
+		},
+		error:function(xhr, ajaxOptions, thrownError){ 
+	    	console.log(xhr.responseText);
+	    	console.log(thrownError); 
+	    }
+
+	});
+	
 }
 
-function loadSettingsPage(){
+function loadDriverInfo(){
+	if(!$('div').hasClass('section-content'))
+		$('<div class="section-content"></div>').appendTo('.right-container');
+	if($('table').hasClass('table-main'))
+		$('.table-main').remove();
 
+	var driver = driver_today();
+	var tdStr = "";
+
+	for(var key in driver){
+		var name = key,
+			plate = driver[key],
+			overtime = 'yes';
+		
+		tdStr +=  ('<tr>' +
+				    '<td>' + name + '</td>' +
+				    '<td>' + plate + '</td>' +
+				    '<td>' + overtime + '</td>' +
+				  '</tr>');
+	}
+	
+	$(' <table id="driver_info" class="table-main">' +
+		 '<tr>' +
+		    '<th>Driver Name</td>' +
+		    '<th>Number Plate</td>' +
+		    '<th>Over Time</td>' +
+		  '</tr>'+ tdStr + '</table>')
+	.appendTo('.section-content');
+	
 }
 
 function showMapTool(){
@@ -1015,7 +1491,7 @@ function showMapTool(){
 	                            '<input class="map-tool" id="tool-seat" name="check" value="Seat" type="radio"><label for="tool-seat"></label>' +
 	                        '</div>' +
 	                        '<div class="tool-cell">' +
-	                            '<img id="img-table" ondragstart="drag(event)" ondragend="dragEnd(event)" draggable="true" width="40" height="40" src="assets/furniture72.SVG">' +
+	                            '<img id="img-table" ondragstart="drag(event)" ondragend="dragEnd(event)" draggable="false" width="40" height="40" src="assets/furniture72.SVG">' +
 	                        '</div>' +
 	                        '<div class="tool-cell">' +
 	                            '<p class="map-tool-name">Group</p>' +
@@ -1042,9 +1518,11 @@ function loadMap(area) {
 
 	$('<div class="section-content"></div>').appendTo('.right-container')
 											.hide();
-	if(!$('div').hasClass('spinner'))
-		showLoadingSpinner()
 
+	if(!$('div').hasClass('spinner'))
+		showLoadingSpinner();
+	
+	//Load all area name from areaname.json file
 	$.getJSON('data/' + area + '.json', function(json, textStatus) {
 			$.each(json, function(index, val) {
 				if(val.type == 'entity'){
@@ -1070,7 +1548,7 @@ function loadMap(area) {
 	    			  "class" : 'map-seat',
 	    			  "style" : style,
 	    			  "draggable": false //Entities are unable to drag.
-			    	}); 
+			    	}).addClass('svg'); 
 			    	if(amac != '') $(img).attr('data-amac', amac);
 			    	
 			    	$('.map-entity[data-position=' + pos + ']').append(img);
@@ -1079,6 +1557,7 @@ function loadMap(area) {
 
 			setTimeout(function(){
 				hideLoadingSpinner();
+				updateMapInfo();
 				$('.section-content').show();
 				showMapTool();
 
@@ -1087,15 +1566,14 @@ function loadMap(area) {
 
 	})
 	.error(function(){
-
 		setTimeout(function(){
 			hideLoadingSpinner();
 			$('.section-content').show();
 	 		$('<div id="div-createMap">' +
-	            '<h1>Let\'s create a <b>map</b> for seats</h1>' +
+	            '<h1>Let\'s create a map for seats!</h1>' +
 	            '<lable for="points"></label>' +
 	            '<input type="number" id="scroll" name="points" min="5" max="10" value="5"></input>' +
-	            '<input id="btn-createMap" value="Create" type="button">' +
+	            '<input style="width: 30%; padding: 12px; cursor: pointer; font-size: 20px; border: 1px solid #FFF; color: #FFF; background: rgb(22, 160, 133) none repeat scroll 0% 0%;" id="btn-createMap" value="Create" type="button">' +
 	        '</div>').appendTo('.section-content');
 
 			var el = $('input[type="number"]');
@@ -1123,44 +1601,71 @@ function loadMap(area) {
 
 }
 
-function updateTable(area){
-   	var allSeat = 0;
-   	var emptySeat = 0;
-   	var areaName = area;
+//Update number of serving and idle seats
+function updateMapInfo(){
+   	var allSeat   = $('.map-seat').length,
+   	    idleSeat  = 0,
+   	    seatingSeat = 0,
+   		amacOnMap = {},
+   		areaName  = $('ul.nav-area').find('a.selected').html(),
+   		piMac     = $('ul.nav-area li.selected').data('pimac'),
+   		currentTime = new Date().today() + " " + new Date().timeNow();
 
-	// $.ajax({
- //        url: 'getDataFromDB.php',
- //        type:'POST',
- //        data: {table_name: '2', area: areaName},
- //        dataType:'JSON',
+	$.each($('.map-seat'), function(index, val) {
+		if(typeof $(val).data('amac') !== 'undefined')
+			amacOnMap[index] = $(val).data('amac');
+	});
 
- //        success: function(msg){
- //        	$('body').find('.table').remove(); //Remove all the table div then
- //        	//Readd all tables
- //        	$.each(msg, function(index){
- //        		createTable(msg[index][0], msg[index][1]);
- //        		//count the occupied seats
- //        		for (var i = 0; i < msg[index][1].length; i++) {
- //        			if(msg[index][1][i][1] == 1) emptySeat++;
- //        			allSeat++;
- //        		};
- //        	});
+	//Number of seat which has been bound > 0
+	if(Object.keys(amacOnMap).length > 0){
+		$.ajax({
+	        url: 'getDataFromDB.php',
+	        type:'POST',
+	        data: {target: 'mapInfo', amac: amacOnMap},
+	        dataType:'JSON',
+	        success: function(msg){
+	        	seatingSeat = msg[0];
+	        	idleSeat = allSeat - seatingSeat;
+	        	//Change number of idle seats
+	        	$('.map-info-cell:nth-child(1)').find('div:nth-child(2)').html(idleSeat);
+	        	//Change number of serving seats
+	        	$('.map-info-cell:nth-child(2)').find('div:nth-child(2)').html(allSeat);
+	        	//Change area name
+	        	$('.area-info-cell:nth-child(1)').find('h1').html(areaName);
+	        	//Change pi MAC
+	        	$('.area-info-cell:nth-child(2)').find('h1').html(piMac);
+	        	//Change last update time
+	        	$('.area-info-cell:nth-child(3)').find('h1').html(currentTime);
 
- //         	//Update all/empty seat text 
- //        	$('#number-all').text(allSeat);
- //        	$('#number-empty').text(emptySeat); 
- //        	$('.show-condition').css('visibility', 'visible');
- //        },
- //        error:function(xhr, ajaxOptions, thrownError){ 
- //          console.log(xhr.responseText);
- //          console.log(thrownError); 
- //        }
- //    });
+	        	console.log('Map info updated!');
+	        },
+	        error:function(xhr, ajaxOptions, thrownError){ 
+	          showMessage('error', 'Failed to update map detail information!');
+	          console.log(xhr.responseText);
+	          console.log(thrownError); 
+	        }
+	    });
+	}
+	else{
+		idleSeat = allSeat;
+	    $('.map-info-cell:nth-child(1)').find('div:nth-child(2)').html(idleSeat);
+	    //Change number of serving seats
+	    $('.map-info-cell:nth-child(2)').find('div:nth-child(2)').html(allSeat);
+	    //Change area name
+	    $('.area-info-cell:nth-child(1)').find('h1').html(areaName);
+	    //Change pi MAC
+	    $('.area-info-cell:nth-child(2)').find('h1').html(piMac);
+	    //Change last update time
+	    $('.area-info-cell:nth-child(3)').find('h1').html(currentTime);
+	}
+
+
 }
 
 
-///////////////////////////////////
-/** Map-related functions below **/
+/*
+*  Map-related functions below 
+*/
 
 function dragEnd(){
 	$('.map-entity').removeClass('disabled');
@@ -1173,6 +1678,7 @@ function drag(ev) {
 function allowDrop(ev) {
     ev.preventDefault();
 }
+
 //Triggered when draggable table icon drops on each entity
 function drop(ev) {
     ev.preventDefault();
@@ -1226,11 +1732,18 @@ function createMap(row, col){
     						  .appendTo('.section-map');
 
     var div_mapInfo = 
-    		$('<div style="height:' + (h + 5)+ 'px;" class="section-information">'+
-			    '<div class="map-info">Idle<div class="map-info-detail">5</div></div>' +
-                '<div class="map-info">Serving<div class="map-info-detail">10</div></div>' +
-                '<div class="map-info">Avg<br>Idle<div class="map-info-detail">5.1</div></div>' +
-                '<div class="map-info">Avg<br>Serving<div class="map-info-detail">2.7</div></div> </div>')
+    		$('<div style="height:' + (h + 5)+ 'px;" class="section-information">' +
+    			'<div class="remove-area">×</div>' + 
+    			'<div class="area-info">' +
+    			'<div class="area-info-cell"><div class="area-info-name">Area Name</div><h1></h1></div>' +
+			    '<div class="area-info-cell"><div class="area-info-name">Pi MAC Address</div><h1></h1></div>' +
+			    '<div class="area-info-cell"><div class="area-info-name">Last Update</div><h1></h1></div>' +
+			    '</div>' +
+			    '<div class="map-info">' +
+			    '<div class="map-info-cell"><div>Idle</div><div class="map-info-detail">0</div></div>' +
+                '<div class="map-info-cell"><div>All</div><div class="map-info-detail">0</div></div>' +
+                '<div class="map-info-cell"><div>Hot</div><div class="map-info-detail">1</div></div>' +
+                '</div>')
     			.appendTo('.section-content');
 
     //Create [row x col] blocks
@@ -1379,7 +1892,7 @@ function saveMapInfo(){
 	          console.log(thrownError); 
 	        }
 		});
-
+		// svgFormater();
 }
 
 function removeMap(){
@@ -1387,38 +1900,6 @@ function removeMap(){
 	if($('.div-map').length){
 		$('.div-map').remove();
 	}
-}
-///////////////////////////////////
-
-
-
-function createTable (_table_no, _seats_no) {
-	var tableno = _table_no;
-	var div_seats_string = "";
-
-	for (var i = 0; i < _seats_no.length; i++) {
-
-		//if seat is occupied, change that background value with css
-		if(_seats_no[i][1] == 0){
-			div_seats_string += "<li><div data-table-no="+ tableno +" class='seats'>"+ _seats_no[i][0] +"</div></li>";
-		}else{
-			div_seats_string += "<li><div data-table-no="+ tableno +" class='seats occupied'>"+ _seats_no[i][0] +"</div></li>";
-		}
-	};
-
-	var table = "<div class='table'>"+
-                  "<div class='table-spilt-top'>"+ tableno +"</div>"+
-                  "<div class='table-spilt-bot'>"+
-                      "<ul>" +  div_seats_string + "</ul></div></div>";
-
-	$('.section-map').append(table);
-	$('.table').last().addClass('table');// add css
-	$('.seats').unbind();
-	$('.seats').bind('click', show_seats_information);
-	$('.seats.occupied').css('background', '#68B0AB');
-
-	$(".table-spilt-top").unbind();
-	$(".table-spilt-top").bind('click', show_table_information);
 }
 
 
